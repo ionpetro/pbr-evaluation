@@ -60,6 +60,18 @@
       .result-error {
         color: red;
       }
+      .measurements {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+      }
+      .measurements p {
+        margin: 8px 0;
+      }
+      .measurements strong {
+        display: inline-block;
+        width: 160px;
+      }
     </style>
   </head>
   <body>
@@ -146,7 +158,23 @@
             } else {
               resultDiv.innerHTML = `
                 <h3>${result.videoName}</h3>
-                <pre>${JSON.stringify(result.measurements, null, 2)}</pre>
+                <div class="measurements">
+                  <p><strong>Bucks:</strong> ${
+                    result.measurements.bucks || 0
+                  }</p>
+                  <p><strong>Kicks:</strong> ${
+                    result.measurements.kicks || 0
+                  }</p>
+                  <p><strong>Directional Changes:</strong> ${
+                    result.measurements.directionalChanges || 0
+                  }</p>
+                  <p><strong>Intensity:</strong> ${
+                    result.measurements.intensity || "N/A"
+                  }</p>
+                  <p><strong>Difficulty:</strong> ${
+                    result.measurements.difficulty || "N/A"
+                  }</p>
+                </div>
               `;
             }
 

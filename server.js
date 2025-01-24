@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const cors = require('cors');
+const FormData = require('form-data');
 
 const app = express();
 const port = 3001;
@@ -43,14 +44,19 @@ app.get('/videos', (req, res) => {
   res.json({ videos });
 });
 
-async function processOneVideo(videoPath, videoName) {
+async function processOneVideo(videoPath, videoName, model) {
   const videoBuffer = fs.readFileSync(videoPath);
   const formData = new FormData();
-  formData.append('video', new Blob([videoBuffer]), videoName);
 
-  const response = await axios.post('http://localhost:3000/api/video', formData, {
+  formData.append('model', model);
+  formData.append('video', videoBuffer, {
+    filename: videoName,
+    contentType: 'video/mp4'
+  });
+  
+  const response = await axios.post('http://localhost:3000/api/evaluate', formData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      ...formData.getHeaders()
     }
   });
 
@@ -67,7 +73,7 @@ app.post('/process-all-videos', async (req, res) => {
     
     for (const video of videos) {
       try {
-        const result = await processOneVideo(video.path, video.name);
+        const result = await processOneVideo(video.path, video.name, 'gpt-4o');
         results.push(result);
       } catch (error) {
         results.push({
